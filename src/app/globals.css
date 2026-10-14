@@ -1,26 +1,263 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  NOCTURNE — a light-luxe house of goods.
+  Warm ivory canvas, espresso ink, antique metallic gold.
+  Tokens emit as :root variables so they're usable from Tailwind utilities
+  (bg-surface, text-gold) and raw CSS / SVG alike.
+*/
+@theme {
+  --color-bg: #f6f2ea; /* warm ivory canvas */
+  --color-surface: #ffffff; /* cards / raised */
+  --color-surface-2: #efe9dd; /* muted warm zone */
+  --color-line: #e2dbce; /* soft hairline borders */
+  --color-ink: #26211c; /* warm espresso — primary text */
+  --color-muted: #867c6d; /* warm stone — secondary */
+  --color-faint: #a99f8e; /* tertiary / disabled */
+  --color-gold: #9c7a39; /* antique gold — readable on ivory */
+  --color-gold-bright: #b6914a;
+  --color-champagne: #c9a86a;
+  --color-on-gold: #2a2114; /* dark text that sits on gold fills */
+
+  --color-ok: #4f7d4f;
+  --color-danger: #b4432f;
+
+  --radius-xs: 1px;
+  --radius-sm: 2px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* Antique metallic gold — reused across text, fills and rules. */
+  --gold-gradient: linear-gradient(
+    135deg,
+    #c9a86a 0%,
+    #a6843c 45%,
+    #846733 100%
+  );
+}
+
+/*
+  DARK MODE — overrides the same token variables, so every Tailwind utility
+  (bg-bg, text-ink, border-line, text-gold …) flips automatically. Applied via
+  [data-theme="dark"] on <html>, set by the ThemeToggle + no-flash script.
+*/
+:root[data-theme="dark"] {
+  --color-bg: #0a0908;
+  --color-surface: #121010;
+  --color-surface-2: #1a1716;
+  --color-line: #2b2724;
+  --color-ink: #efe9dd;
+  --color-muted: #9c9385;
+  --color-faint: #645c50;
+  --color-gold: #c6a664;
+  --color-gold-bright: #e4cf98;
+  --color-champagne: #efdfb6;
+  --color-on-gold: #2a2114;
+
+  --gold-gradient: linear-gradient(
+    135deg,
+    #efdfb6 0%,
+    #d8ba78 38%,
+    #c6a664 60%,
+    #a9833f 100%
+  );
+}
+
+:root[data-theme="dark"] .grain {
+  mix-blend-mode: soft-light;
+  opacity: 0.045;
+}
+
+:root[data-theme="dark"] ::selection {
+  background-color: var(--color-gold);
+  color: #2a2114;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    letter-spacing: 0.01em;
+  }
+
+  h1,
+  h2 {
+    letter-spacing: -0.01em;
+  }
+
+  .eyebrow {
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  *:focus-visible {
+    outline: 1px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: #fff;
+  }
+
+  * {
+    scrollbar-color: var(--color-faint) transparent;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Antique metallic gold text. */
+  .text-gold-gradient {
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-gold-gradient {
+    background-image: var(--gold-gradient);
+  }
+
+  /* Centre-weighted gold hairline rule. */
+  .rule-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-gold) 50%,
+      transparent
+    );
+  }
+
+  /* Editorial link — gold underline grows from the left. */
+  .link-underline {
+    background-image: var(--gold-gradient);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition: background-size 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+}
+
+/* Soft lattice for hero atmospheres. */
+.luxe-grid {
+  background-image:
+    linear-gradient(to right, var(--color-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+}
+
+/* Warm radial gold glow for hero backdrops. */
+.gold-glow {
+  background:
+    radial-gradient(
+      60% 50% at 50% 0%,
+      rgba(166, 132, 60, 0.12),
+      transparent 70%
+    );
+}
+
+/* Fine paper grain over the whole page — a crafted, tactile finish. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Entry loader — rotating gold arc + progress fill. */
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.loader-spin {
+  animation: loader-spin 0.9s linear infinite;
+}
+
+@keyframes loader-bar {
+  0% {
+    width: 0%;
+  }
+  80% {
+    width: 92%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+.loader-bar {
+  width: 0;
+  animation: loader-bar 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes nocturne-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise {
+  animation: nocturne-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Scroll-reveal — paired with the Reveal client component. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .rise,
+  .reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
